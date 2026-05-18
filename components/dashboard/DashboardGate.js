@@ -38,6 +38,7 @@ export default function DashboardGate({ children }) {
         <a className="dashboard-logo" href="/dashboard">QuoteGate</a>
         <nav>
           <a href="/dashboard">Requests</a>
+          <a href="/services">Service directory</a>
           <a href="/setup">Quote page</a>
           <a href="/q/brightside-home-services">Public demo</a>
         </nav>

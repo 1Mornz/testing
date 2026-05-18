@@ -12,6 +12,9 @@ const emptyForm = {
   contactPhone: '',
   depositAmount: 0,
   depositRequired: false,
+  publicListingEnabled: true,
+  quizEnabled: true,
+  quizQuestions: [],
   businessDescription: '',
   slug: '',
 };
@@ -42,6 +45,30 @@ export default function SetupPage() {
 
   function update(field, value) {
     setForm((current) => ({ ...current, [field]: value }));
+  }
+
+  function addQuestion() {
+    setForm((current) => ({
+      ...current,
+      quizQuestions: [
+        ...(current.quizQuestions || []),
+        { id: `draft-${Date.now()}`, label: '', type: 'yesno', required: true, options: '', preferredAnswers: '', disqualifyingAnswers: '' },
+      ],
+    }));
+  }
+
+  function updateQuestion(index, field, value) {
+    setForm((current) => ({
+      ...current,
+      quizQuestions: (current.quizQuestions || []).map((question, questionIndex) => questionIndex === index ? { ...question, [field]: value } : question),
+    }));
+  }
+
+  function removeQuestion(index) {
+    setForm((current) => ({
+      ...current,
+      quizQuestions: (current.quizQuestions || []).filter((_question, questionIndex) => questionIndex !== index),
+    }));
   }
 
   async function save(event) {
@@ -90,7 +117,35 @@ export default function SetupPage() {
           <label>Quote page slug<input value={form.slug} onChange={(e) => update('slug', e.target.value)} required placeholder="brightside-home-services" /></label>
           <label>Deposit amount<input value={form.depositAmount} onChange={(e) => update('depositAmount', Number(e.target.value))} type="number" min="0" step="1" /></label>
           <label className="check-row"><input checked={form.depositRequired} onChange={(e) => update('depositRequired', e.target.checked)} type="checkbox" /> Require deposit before estimating</label>
+          <label className="check-row"><input checked={Boolean(form.publicListingEnabled)} onChange={(e) => update('publicListingEnabled', e.target.checked)} type="checkbox" /> List this service publicly</label>
+          <label className="check-row"><input checked={Boolean(form.quizEnabled)} onChange={(e) => update('quizEnabled', e.target.checked)} type="checkbox" /> Use qualification quiz</label>
           <label className="full">Business description<textarea value={form.businessDescription} onChange={(e) => update('businessDescription', e.target.value)} rows="5" /></label>
+          <section className="quiz-builder full">
+            <div className="section-row">
+              <div>
+                <h2>Qualification quiz</h2>
+                <p className="muted">Ask up to 8 questions before a customer pays a deposit.</p>
+              </div>
+              <button className="button secondary" type="button" onClick={addQuestion}>Add question</button>
+            </div>
+            {(form.quizQuestions || []).map((question, index) => (
+              <div className="quiz-builder-card" key={question.id || index}>
+                <label className="full">Question<input value={question.label || ''} onChange={(e) => updateQuestion(index, 'label', e.target.value)} placeholder="Is the project in our service area?" /></label>
+                <label>Type
+                  <select value={question.type || 'short'} onChange={(e) => updateQuestion(index, 'type', e.target.value)}>
+                    <option value="yesno">Yes / No</option>
+                    <option value="multiple">Multiple choice</option>
+                    <option value="short">Short answer</option>
+                  </select>
+                </label>
+                <label className="check-row"><input checked={Boolean(question.required)} onChange={(e) => updateQuestion(index, 'required', e.target.checked)} type="checkbox" /> Required</label>
+                {question.type === 'multiple' && <label className="full">Options, one per line<textarea value={Array.isArray(question.options) ? question.options.join('\n') : question.options || ''} onChange={(e) => updateQuestion(index, 'options', e.target.value)} rows="3" /></label>}
+                <label>Preferred answers<textarea value={Array.isArray(question.preferredAnswers) ? question.preferredAnswers.join('\n') : question.preferredAnswers || ''} onChange={(e) => updateQuestion(index, 'preferredAnswers', e.target.value)} rows="3" placeholder="yes&#10;repair" /></label>
+                <label>Disqualifying answers<textarea value={Array.isArray(question.disqualifyingAnswers) ? question.disqualifyingAnswers.join('\n') : question.disqualifyingAnswers || ''} onChange={(e) => updateQuestion(index, 'disqualifyingAnswers', e.target.value)} rows="3" placeholder="no&#10;inspection only" /></label>
+                <button className="button secondary full" type="button" onClick={() => removeQuestion(index)}>Remove question</button>
+              </div>
+            ))}
+          </section>
           <div className="form-actions full">
             <button className="button primary" type="submit" disabled={saving}>{saving ? 'Saving...' : 'Save quote page'}</button>
             {message && <p className="success-text">{message}</p>}

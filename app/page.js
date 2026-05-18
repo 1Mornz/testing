@@ -19,7 +19,8 @@ export default function LandingPage() {
           <h1>Stop giving free quotes to people who never book.</h1>
           <p className="subheadline">Launch a polished quote request page that collects job details, photos, and optional deposits before you spend time estimating.</p>
           <div className="actions">
-            <a className="button primary" href="/login">Login to dashboard</a>
+            <a className="button primary" href="/services">Find services</a>
+            <a className="button secondary light" href="/login">Provider login</a>
             <a className="button secondary light" href="/q/brightside-home-services">View demo quote page</a>
           </div>
           <div className="hero-proof">

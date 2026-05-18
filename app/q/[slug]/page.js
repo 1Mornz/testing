@@ -27,6 +27,7 @@ export default function PublicQuotePage() {
   const [files, setFiles] = useState([]);
   const [payDeposit, setPayDeposit] = useState(false);
   const [form, setForm] = useState(emptyForm);
+  const [quizAnswers, setQuizAnswers] = useState({});
   const canChooseDeposit = useMemo(() => Number(provider?.depositAmount || 0) > 0 && !provider?.depositRequired, [provider]);
 
   useEffect(() => {
@@ -56,6 +57,11 @@ export default function PublicQuotePage() {
     try {
       const body = new FormData();
       Object.entries(form).forEach(([key, value]) => body.append(key, value));
+      body.append('quizAnswers', JSON.stringify((provider.quizQuestions || []).map((question) => ({
+        questionId: question.id,
+        questionLabel: question.label,
+        answer: quizAnswers[question.id] || '',
+      }))));
       files.forEach((file) => body.append('photos', file));
       const response = await fetch(`/api/public/${params.slug}/requests`, { method: 'POST', body });
       const data = await response.json();
@@ -99,6 +105,33 @@ export default function PublicQuotePage() {
       {!submitted ? (
         <form className="panel form-grid" onSubmit={submit}>
           <h2 className="full">Request a quote</h2>
+          {provider.quizEnabled && provider.quizQuestions?.length ? (
+            <section className="qualification-section full">
+              <p className="eyebrow">Qualification quiz</p>
+              <h2>Help {provider.businessName} confirm fit.</h2>
+              <p className="muted">Your answers help the provider prioritize qualified projects before deposit payment.</p>
+              {provider.quizQuestions.map((question) => (
+                <label className="full" key={question.id}>{question.label}
+                  {question.type === 'yesno' ? (
+                    <select required={question.required} value={quizAnswers[question.id] || ''} onChange={(e) => setQuizAnswers((current) => ({ ...current, [question.id]: e.target.value }))}>
+                      <option value="">Choose an answer</option>
+                      <option value="yes">Yes</option>
+                      <option value="no">No</option>
+                    </select>
+                  ) : null}
+                  {question.type === 'multiple' ? (
+                    <select required={question.required} value={quizAnswers[question.id] || ''} onChange={(e) => setQuizAnswers((current) => ({ ...current, [question.id]: e.target.value }))}>
+                      <option value="">Choose an answer</option>
+                      {(question.options || []).map((option) => <option value={option} key={option}>{option}</option>)}
+                    </select>
+                  ) : null}
+                  {question.type === 'short' ? (
+                    <input required={question.required} value={quizAnswers[question.id] || ''} onChange={(e) => setQuizAnswers((current) => ({ ...current, [question.id]: e.target.value }))} />
+                  ) : null}
+                </label>
+              ))}
+            </section>
+          ) : null}
           <label>Name<input value={form.customerName} onChange={(e) => update('customerName', e.target.value)} required /></label>
           <label>Phone<input value={form.phone} onChange={(e) => update('phone', e.target.value)} required /></label>
           <label>Email<input value={form.email} onChange={(e) => update('email', e.target.value)} type="email" required /></label>

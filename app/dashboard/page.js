@@ -28,8 +28,8 @@ export default function DashboardPage() {
   }, []);
 
   const paidCount = requests.filter((request) => request.deposit.status === 'paid').length;
-  const unpaidCount = requests.filter((request) => request.deposit.status === 'unpaid').length;
   const newCount = requests.filter((request) => request.status === 'new').length;
+  const qualifiedCount = requests.filter((request) => request.qualification?.status === 'qualified').length;
 
   return (
     <DashboardGate>
@@ -54,7 +54,7 @@ export default function DashboardPage() {
         <article className="metric-card"><span>Total requests</span><strong>{requests.length}</strong></article>
         <article className="metric-card"><span>New leads</span><strong>{newCount}</strong></article>
         <article className="metric-card"><span>Paid deposits</span><strong>{paidCount}</strong></article>
-        <article className="metric-card"><span>Unpaid deposits</span><strong>{unpaidCount}</strong></article>
+        <article className="metric-card"><span>Qualified</span><strong>{qualifiedCount}</strong></article>
       </section>
       <section className="panel">
         {loading ? <div className="empty">Loading requests...</div> : null}
@@ -69,6 +69,7 @@ export default function DashboardPage() {
                 </div>
                 <div className="row-meta">
                   <StatusBadge value={request.status} />
+                  {request.qualification && <span className={`qualification-pill ${request.qualification.status}`}>{String(request.qualification.status).replaceAll('_', ' ')}</span>}
                   <span className={`payment-pill ${request.deposit.status}`}>{paymentLabel(request)}</span>
                   <time>{new Date(request.createdAt).toLocaleDateString()}</time>
                 </div>

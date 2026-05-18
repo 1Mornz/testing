@@ -74,9 +74,23 @@ export default function RequestDetailPage() {
           <h2>Deposit</h2>
           <p className="deposit-amount">{request.deposit.amount ? `$${request.deposit.amount}` : 'No deposit'}</p>
           <p>Status: <strong>{request.deposit.status}</strong></p>
+          {request.qualification && <p>Qualification: <strong>{String(request.qualification.status).replaceAll('_', ' ')}</strong></p>}
           {request.deposit.stripeCheckoutSessionId && <p className="muted">Checkout: {request.deposit.stripeCheckoutSessionId}</p>}
           {request.deposit.stripePaymentIntentId && <p className="muted">Payment: {request.deposit.stripePaymentIntentId}</p>}
         </aside>
+        <article className="panel full-width">
+          <h2>Qualification answers</h2>
+          {request.quizAnswers?.length ? (
+            <dl className="quiz-answer-list">
+              {request.quizAnswers.map((answer) => (
+                <div key={answer.questionId}>
+                  <dt>{answer.questionLabel}</dt>
+                  <dd>{answer.answer}</dd>
+                </div>
+              ))}
+            </dl>
+          ) : <p className="empty">No qualification quiz answers were submitted.</p>}
+        </article>
         <article className="panel full-width">
           <h2>Photos</h2>
           {request.photos.length ? (

@@ -18,6 +18,7 @@ export async function POST(request, { params }) {
 
     const form = await request.formData();
     const input = Object.fromEntries(['customerName', 'phone', 'email', 'serviceNeeded', 'location', 'description', 'timeframe', 'budgetRange'].map((key) => [key, form.get(key) || '']));
+    input.quizAnswers = JSON.parse(form.get('quizAnswers') || '[]');
     const files = form.getAll('photos').filter((file) => file && file.size);
 
     if (files.length > 6) {
