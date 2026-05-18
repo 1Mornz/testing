@@ -12,7 +12,7 @@ export default function RootLayout({ children }) {
         <header className="topbar">
           <a className="brand" href="/">QuoteGate</a>
           <nav>
-            <a href="/setup">Setup</a>
+            <a href="/login">Login</a>
             <a href="/dashboard">Dashboard</a>
           </nav>
         </header>

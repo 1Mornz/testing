@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import QRCode from 'qrcode';
+import DashboardGate from '@/components/dashboard/DashboardGate';
 
 const emptyForm = {
   businessName: '',
@@ -21,9 +22,11 @@ export default function SetupPage() {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [qrCode, setQrCode] = useState('');
-  const publicUrl = useMemo(() => form.slug ? `${window.location.origin}/q/${form.slug}` : '', [form.slug]);
+  const [origin, setOrigin] = useState('');
+  const publicUrl = useMemo(() => form.slug && origin ? `${origin}/q/${form.slug}` : '', [form.slug, origin]);
 
   useEffect(() => {
+    setOrigin(window.location.origin);
     fetch('/api/provider').then((res) => res.json()).then(({ settings }) => {
       if (settings) setForm(settings);
     });
@@ -69,7 +72,7 @@ export default function SetupPage() {
   }
 
   return (
-    <>
+    <DashboardGate>
       <section className="page-heading">
         <div>
           <p className="eyebrow">Provider setup</p>
@@ -102,6 +105,6 @@ export default function SetupPage() {
           {qrCode ? <a className="button secondary" href={qrCode} download="quotegate-qr.png">Download QR</a> : null}
         </aside>
       </div>
-    </>
+    </DashboardGate>
   );
 }

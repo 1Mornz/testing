@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import StatusBadge from '@/components/StatusBadge';
+import DashboardGate from '@/components/dashboard/DashboardGate';
 
 export default function RequestDetailPage() {
   const params = useParams();
@@ -32,11 +33,11 @@ export default function RequestDetailPage() {
     if (response.ok) setRequest(data.request);
   }
 
-  if (error) return <section className="panel error-text">{error}</section>;
-  if (!request) return <section className="panel empty">Loading request...</section>;
+  if (error) return <DashboardGate><section className="panel error-text">{error}</section></DashboardGate>;
+  if (!request) return <DashboardGate><section className="panel empty">Loading request...</section></DashboardGate>;
 
   return (
-    <>
+    <DashboardGate>
       <section className="page-heading">
         <div>
           <p className="eyebrow">Request detail</p>
@@ -89,6 +90,6 @@ export default function RequestDetailPage() {
           ) : <p className="empty">No photos were uploaded.</p>}
         </article>
       </div>
-    </>
+    </DashboardGate>
   );
 }

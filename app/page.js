@@ -1,29 +1,72 @@
 const benefits = [
-  ['Filter unserious leads', 'Ask for the right details and optionally collect a small deposit before estimating.'],
-  ['Collect better job details', 'Customers submit service needs, budget, timing, location, and project notes in one place.'],
-  ['Request photos upfront', 'Photo uploads help providers estimate faster and reduce back-and-forth.'],
-  ['Require quote deposits', 'Use Stripe Checkout for small quote deposits when payment keys are configured.'],
-  ['Share one simple link', 'Use the public quote page URL or QR code on cards, trucks, and social profiles.'],
-  ['Manage requests', 'Review new, quoted, booked, and rejected requests from a focused dashboard.'],
+  ['Paid quote requests', 'Collect a small deposit before spending time on estimates for low-intent leads.'],
+  ['Better intake', 'Ask for the job details, photos, budget, location, and timing you need upfront.'],
+  ['Simple operations', 'Review requests, payment status, and pipeline stage from one quiet dashboard.'],
+];
+
+const steps = [
+  ['1', 'Create your page', 'Add your services, service area, contact details, and deposit rules.'],
+  ['2', 'Share one link', 'Send customers to a public quote page or print the QR code.'],
+  ['3', 'Review better leads', 'Open the dashboard and move requests from new to booked.'],
 ];
 
 export default function LandingPage() {
   return (
     <>
-      <section className="hero">
-        <div className="hero-copy">
-          <p className="eyebrow">Paid quote request pages for service providers</p>
+      <section className="landing-hero">
+        <div className="landing-hero-copy">
+          <p className="eyebrow">QuoteGate for service providers</p>
           <h1>Stop giving free quotes to people who never book.</h1>
-          <p className="subheadline">QuoteGate helps service providers collect job details, photos, and optional quote deposits before spending time on estimates.</p>
+          <p className="subheadline">Launch a polished quote request page that collects job details, photos, and optional deposits before you spend time estimating.</p>
           <div className="actions">
-            <a className="button primary" href="/setup">Create your quote page</a>
-            <a className="button secondary" href="/q/brightside-home-services">View demo quote page</a>
+            <a className="button primary" href="/login">Login to dashboard</a>
+            <a className="button secondary light" href="/q/brightside-home-services">View demo quote page</a>
+          </div>
+          <div className="hero-proof">
+            <span>JSON-backed MVP</span>
+            <span>Stripe-ready deposits</span>
+            <span>Photo uploads</span>
+          </div>
+        </div>
+        <div className="hero-product-panel">
+          <div className="panel-topline">
+            <span>BrightSide Home Services</span>
+            <strong>$35 deposit</strong>
+          </div>
+          <div className="lead-preview">
+            <span className="badge badge-new">new</span>
+            <h2>Drywall repair and paint touch-up</h2>
+            <p>Two damaged areas in a hallway after moving furniture. Photos attached.</p>
+            <div className="lead-preview-meta">
+              <span>Ferndale, MI</span>
+              <span>$250 - $500</span>
+            </div>
+          </div>
+          <div className="mini-metrics">
+            <div><strong>18</strong><span>Requests</span></div>
+            <div><strong>11</strong><span>Qualified</span></div>
+            <div><strong>6</strong><span>Paid</span></div>
           </div>
         </div>
       </section>
-      <section className="benefits">
+
+      <section className="section-heading">
+        <p className="eyebrow">Why it works</p>
+        <h2>Create a paid quote request page in minutes.</h2>
+      </section>
+      <section className="benefits polished">
         {benefits.map(([title, copy]) => (
-          <article className="card" key={title}>
+          <article className="card feature-card" key={title}>
+            <h2>{title}</h2>
+            <p>{copy}</p>
+          </article>
+        ))}
+      </section>
+
+      <section className="steps-band">
+        {steps.map(([number, title, copy]) => (
+          <article className="step-card" key={title}>
+            <span>{number}</span>
             <h2>{title}</h2>
             <p>{copy}</p>
           </article>

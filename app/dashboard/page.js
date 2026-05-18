@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import StatusBadge from '@/components/StatusBadge';
+import DashboardGate from '@/components/dashboard/DashboardGate';
 
 function paymentLabel(request) {
   if (request.deposit.status === 'paid') return 'paid';
@@ -13,9 +14,11 @@ export default function DashboardPage() {
   const [requests, setRequests] = useState([]);
   const [settings, setSettings] = useState(null);
   const [loading, setLoading] = useState(true);
-  const publicUrl = useMemo(() => settings ? `${window.location.origin}/q/${settings.slug}` : '', [settings]);
+  const [origin, setOrigin] = useState('');
+  const publicUrl = useMemo(() => settings && origin ? `${origin}/q/${settings.slug}` : '', [settings, origin]);
 
   useEffect(() => {
+    setOrigin(window.location.origin);
     Promise.all([fetch('/api/requests').then((res) => res.json()), fetch('/api/provider').then((res) => res.json())])
       .then(([requestData, providerData]) => {
         setRequests(requestData.requests || []);
@@ -24,8 +27,12 @@ export default function DashboardPage() {
       .finally(() => setLoading(false));
   }, []);
 
+  const paidCount = requests.filter((request) => request.deposit.status === 'paid').length;
+  const unpaidCount = requests.filter((request) => request.deposit.status === 'unpaid').length;
+  const newCount = requests.filter((request) => request.status === 'new').length;
+
   return (
-    <>
+    <DashboardGate>
       <section className="page-heading">
         <div>
           <p className="eyebrow">Provider dashboard</p>
@@ -43,6 +50,12 @@ export default function DashboardPage() {
           <a className="button secondary" href={`/q/${settings.slug}`}>Open public page</a>
         </section>
       )}
+      <section className="metric-grid">
+        <article className="metric-card"><span>Total requests</span><strong>{requests.length}</strong></article>
+        <article className="metric-card"><span>New leads</span><strong>{newCount}</strong></article>
+        <article className="metric-card"><span>Paid deposits</span><strong>{paidCount}</strong></article>
+        <article className="metric-card"><span>Unpaid deposits</span><strong>{unpaidCount}</strong></article>
+      </section>
       <section className="panel">
         {loading ? <div className="empty">Loading requests...</div> : null}
         {!loading && !requests.length ? <div className="empty">No quote requests yet. Share your public page to start collecting leads.</div> : null}
@@ -64,6 +77,6 @@ export default function DashboardPage() {
           </div>
         ) : null}
       </section>
-    </>
+    </DashboardGate>
   );
 }
